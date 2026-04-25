@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>COA | Creator Of Astronomy - Pendaftaran Resmi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #eef5ff;
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Stars background */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle 3s infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    /* Splash Screen / Connecting Animation */
+    .splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s ease;
+    }
+    .splash-screen.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .connecting-text {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, #ffffff, #4a7db5, #1a3a5c);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 2rem;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; letter-spacing: 4px; }
+      50% { opacity: 1; letter-spacing: 6px; }
+    }
+    .scan-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #0a0a2a;
+      border: 2px solid #2a4a7a;
+      box-shadow: 0 0 30px rgba(42, 74, 122, 0.5);
+    }
+    .logo-scan {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #4a9eff, #8fbbff, #4a9eff, transparent);
+      animation: scan 2s ease-in-out infinite;
+      box-shadow: 0 0 10px #4a9eff;
+    }
+    @keyframes scan {
+      0% { top: 0; }
+      50% { top: 100%; }
+      100% { top: 0; }
+    }
+    .splash-footer {
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: #4a7db5;
+    }
+
+    /* Main Content - awalnya hidden */
+    .main-content {
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    .main-content.show {
+      opacity: 1;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Animated gradient border */
+    .glass-card {
+      background: rgba(8, 12, 25, 0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      border: 1px solid rgba(42, 74, 122, 0.5);
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.8), 0 0 0 1px rgba(42, 74, 122, 0.2);
+      overflow: hidden;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .brand h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, #7ab3d9, #2a5a8a);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .brand p {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-top: 0.5rem;
+    }
+    .slogan {
+      font-style: italic;
+      font-size: 0.85rem;
+      background: rgba(42, 74, 122, 0.2);
+      display: inline-block;
+      padding: 0.3rem 1.5rem;
+      border-radius: 40px;
+      margin-top: 0.75rem;
+      border: 1px solid rgba(74, 158, 255, 0.3);
+    }
+
+    /* Step Indicator */
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.4;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    .step.active {
+      opacity: 1;
+    }
+    .step .step-number {
+      width: 45px;
+      height: 45px;
+      background: rgba(42, 74, 122, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 2px solid #2a4a7a;
+      transition: 0.3s;
+    }
+    .step.active .step-number {
+      background: #1a3a5c;
+      border-color: #4a9eff;
+      box-shadow: 0 0 15px rgba(74, 158, 255, 0.5);
+    }
+    .step .step-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+
+    /* Pages */
+    .page {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .page.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Form Elements */
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #9abce6;
+      letter-spacing: 0.5px;
+    }
+    .input-group input, .input-group textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid #2a4a7a;
+      border-radius: 1rem;
+      padding: 0.85rem 1.2rem;
+      color: #ffffff;
+      font-family: 'Inter', monospace;
+      font-size: 0.95rem;
+      transition: 0.2s;
+    }
+    .input-group input:focus, .input-group textarea:focus {
+      border-color: #4a9eff;
+      box-shadow: 0 0 10px rgba(74, 158, 255, 0.3);
+      outline: none;
+    }
+
+    /* Law Container - Versi LENGKAP */
+    .law-container {
+      max-height: 450px;
+      overflow-y: auto;
+      padding-right: 12px;
+      margin-bottom: 1.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 1rem;
+      padding: 1.2rem;
+      border: 1px solid #1a3a5c;
+    }
+    .law-chapter {
+      margin-bottom: 1.5rem;
+      border-left: 3px solid #4a9eff;
+      padding-left: 1rem;
+    }
+    .law-chapter h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #ffecb3;
+    }
+    .law-article {
+      font-size: 0.78rem;
+      margin: 0.75rem 0;
+      line-height: 1.6;
+      color: #ccddf8;
+    }
+    .law-article strong {
+      color: #7ab3d9;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1.2rem 0;
+    }
+    .checkbox-group input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #2a4a7a;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .btn {
+      padding: 0.85rem 2rem;
+      border-radius: 2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-prev {
+      background: rgba(42, 74, 122, 0.3);
+      color: white;
+      border: 1px solid #2a4a7a;
+    }
+    .btn-prev:hover {
+      background: rgba(42, 74, 122, 0.6);
+      transform: translateX(-3px);
+    }
+    .btn-next {
+      background: linear-gradient(135deg, #1a3a5c, #0a1a2c);
+      color: white;
+      border: 1px solid #4a9eff;
+    }
+    .btn-next:hover {
+      background: linear-gradient(135deg, #2a5a8a, #1a3a5c);
+      transform: translateX(3px);
+      box-shadow: 0 0 15px rgba(74, 158, 255, 0.3);
+    }
+    .btn-submit {
+      background: linear-gradient(135deg, #1e5a3a, #0e3a22);
+      color: white;
+      border: 1px solid #4aff8a;
+    }
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #2e7a4a, #1a5a35);
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(74, 255, 138, 0.3);
+    }
+
+    /* Ringkasan Biodata */
+    .summary-card {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      border: 1px solid #2a4a7a;
+    }
+    .summary-item {
+      display: flex;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(42, 74, 122, 0.3);
+    }
+    .summary-label {
+      width: 140px;
+      font-weight: 600;
+      color: #7ab3d9;
+    }
+    .summary-value {
+      flex: 1;
+      color: white;
+      word-break: break-word;
+    }
+
+    .error-msg {
+      background: #4a1a1a;
+      border-left: 4px solid #ff6a6a;
+      padding: 0.7rem;
+      border-radius: 0.8rem;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.7rem;
+      opacity: 0.4;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a1a2c;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a4a7a;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .glass-card { padding: 1.2rem; }
+      .summary-label { width: 110px; font-size: 0.75rem; }
+      .btn { padding: 0.6rem 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<!-- SPLASH SCREEN -->
+<div class="splash-screen" id="splashScreen">
+  <div class="connecting-text">CONNECTING TO COA</div>
+  <div class="scan-container">
+    <!-- GANTI LOGO DI SINI - gunakan tag <img> -->
+    <img class="logo-scan" id="logoScan" src="COA Logo.png" alt="COA Logo">
+    <div class="scan-line"></div>
+  </div>
+  <div class="splash-footer">
+    <i class="fas fa-satellite"></i> Establishing secure connection...
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content" id="mainContent">
+  <div class="container">
+    <div class="brand">
+      <h1><i class="fas fa-rocket"></i> CREATOR OF ASTRONOMY</h1>
+      <p>Komunitas Eksplorasi Langit & Kreator Ilmiah</p>
+      <div class="slogan">
+        <i class="fas fa-meteor"></i> "Exploring the Universe, Creating the Future"
+      </div>
+    </div>
+
+    <div class="step-indicator">
+      <div class="step" data-step="1" onclick="goToPage(1)">
+        <div class="step-number">1</div>
+        <span class="step-label">DATA DIRI</span>
+      </div>
+      <div class="step" data-step="2" onclick="goToPage(2)">
+        <div class="step-number">2</div>
+        <span class="step-label">KONTAK</span>
+      </div>
+      <div class="step" data-step="3" onclick="goToPage(3)">
+        <div class="step-number">3</div>
+        <span class="step-label">UNDANG-UNDANG</span>
+      </div>
+      <div class="step" data-step="4" onclick="goToPage(4)">
+        <div class="step-number">4</div>
+        <span class="step-label">KIRIM</span>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <!-- PAGE 1: Nama Lengkap, Umur, Alamat -->
+      <div id="page1" class="page active">
+        <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-user-astronaut"></i> Data Diri</h3>
+        <div class="input-group">
+          <label class="required-star">Nama Lengkap</label>
+          <input type="text" id="fullname" placeholder="Contoh: Galileo Galilei">
+        </div>
+        <div class="input-group">
+          <label class="required-star">Umur</label>
+          <input type="number" id="age" placeholder="Contoh: 22" min="1" max="120">
+        </div>
+        <div class="input-group">
+          <label>Alamat / Domisili</label>
+          <input type="text" id="address" placeholder="Kota, Provinsi">
+        </div>
+        <div id="errorPage1"></div>
+        <div class="button-group">
+          <div></div>
+          <button class="btn btn-next" onclick="nextPage(1)">Selanjutnya <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- PAGE 2: Email, TikTok, WhatsApp -->
+      <div id="page2" class="page">
+        <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-globe"></i> Informasi Kontak</h3>
+        <div class="input-group">
+          <label class="required-star">Email</label>
+          <input type="email" id="email" placeholder="nama@example.com">
+        </div>
+        <div class="input-group">
+          <label>Nama Akun TikTok</label>
+          <input type="text" id="tiktok" placeholder="@astronomipemula">
+        </div>
+        <div class="input-group">
+          <label class="required-star">Nomor WhatsApp</label>
+          <input type="tel" id="whatsapp" placeholder="08123456789">
+        </div>
+        <div id="errorPage2"></div>
+        <div class="button-group">
+          <button class="btn btn-prev" onclick="prevPage(2)"><i class="fas fa-arrow-left"></i> Kembali</button>
+          <button class="btn btn-next" onclick="nextPage(2)">Selanjutnya <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- PAGE 3: UNDANG-UNDANG LENGKAP -->
+      <div id="page3" class="page">
+        <h3 style="margin-bottom: 1rem;"><i class="fas fa-gavel"></i> Undang-Undang COA</h3>
+        <div class="law-container">
+          <!-- BAB I -->
+          <div class="law-chapter"><h4>BAB I: IDENTITAS DAN KEDUDUKAN</h4>
+            <div class="law-article"><strong>Pasal 1: Nama</strong><br> Ayat 1. Organisasi ini bernama Creator Of Astronomy, yang selanjutnya disingkat menjadi COA.<br> Ayat 2. Nama COA wajib digunakan dalam seluruh kegiatan resmi dan administrasi organisasi.</div>
+            <div class="law-article"><strong>Pasal 2: Semboyan</strong><br> Ayat 1. Semboyan organisasi adalah "Exploring the Universe, Creating the Future".<br> Ayat 2. Semboyan ini mencerminkan semangat eksplorasi ilmiah dan kontribusi kreatif anggota bagi masa depan astronomi.</div>
+          </div>
+          <div class="law-chapter"><h4>BAB II: ASAS DAN TUJUAN</h4>
+            <div class="law-article"><strong>Pasal 3: Asas</strong><br> Ayat 1. COA berasaskan kekeluargaan, kreativitas, edukasi, dan kecintaan terhadap ilmu pengetahuan astronomi.<br> Ayat 2. Dalam menjalankan kegiatannya, COA bersifat independen dan tidak berafiliasi dengan kepentingan politik manapun.</div>
+            <div class="law-article"><strong>Pasal 4: Tujuan</strong><br> Ayat 1. Menjadi wadah bagi para kreator dan pengamat langit untuk berbagi karya dan ilmu pengetahuan.<br> Ayat 2. Mengedukasi masyarakat luas mengenai fenomena alam semesta secara faktual.<br> Ayat 3. Membangun jaringan kolaborasi antar penggemar astronomi secara inklusif dan berkelanjutan.</div>
+          </div>
+          <div class="law-chapter"><h4>BAB III: KEANGGOTAAN</h4>
+            <div class="law-article"><strong>Pasal 5: Syarat Anggota</strong><br> Ayat 1. Anggota COA adalah individu yang memiliki minat dalam bidang astronomi, baik sebagai pengamat, fotografer (astrophotography), penulis, maupun penggiat edukasi.<br> Ayat 2. Status keanggotaan diperoleh setelah memenuhi prosedur pendaftaran yang ditetapkan oleh pengurus.</div>
+            <div class="law-article"><strong>Pasal 6: Hak Anggota</strong><br> Ayat 1. Setiap anggota berhak mendapatkan akses ke sumber daya, informasi, dan seluruh kegiatan resmi komunitas.<br> Ayat 2. Setiap anggota berhak mengajukan ide, saran, dan kritik yang membangun demi kemajuan organisasi.<br> Ayat 3. Anggota diperbolehkan menggunakan atribut atau identitas COA dalam karya yang berkaitan dengan komunitas setelah mendapatkan izin dari pengurus.</div>
+            <div class="law-article"><strong>Pasal 7: Kewajiban Anggota</strong><br> Ayat 1. Anggota wajib menjaga nama baik COA di ruang publik maupun media sosial.<br> Ayat 2. Anggota wajib menghargai hak cipta dan orisinalitas karya sesama anggota.<br> Ayat 3. Anggota dilarang keras menyebarkan hoaks atau informasi astronomi yang tidak memiliki dasar ilmiah (pseudosains).</div>
+          </div>
+          <div class="law-chapter"><h4>BAB IV: STRUKTUR ORGANISASI</h4>
+            <div class="law-article"><strong>Pasal 8: Kepengurusan</strong><br> Ayat 1. Struktur inti kepengurusan COA terdiri dari:<br> • Director/Ketua: Pemegang keputusan tertinggi dan penanggung jawab organisasi.<br> • Secretary: Penanggung jawab urusan administrasi, surat-menyurat, dan pendataan.<br> • Treasurer: Pengelola keuangan dan pendanaan organisasi.<br> • Creative Division: Penanggung jawab pembuatan konten, publikasi, dan estetika visual.<br> Ayat 2. Research & Observation Division: Penanggung jawab teknis pengamatan, verifikasi data, dan riset astronomi.<br> Ayat 3. Masa jabatan pengurus inti diatur lebih lanjut dalam peraturan tambahan organisasi.</div>
+          </div>
+          <div class="law-chapter"><h4>BAB V: KODE ETIK KREATOR</h4>
+            <div class="law-article"><strong>Pasal 9: Originalitas</strong><br> Ayat 1. Setiap karya yang dipublikasikan atas nama COA wajib menjunjung tinggi nilai orisinalitas.<br> Ayat 2. Tindakan plagiarisme terhadap karya orang lain merupakan pelanggaran berat yang akan ditindak tegas.</div>
+            <div class="law-article"><strong>Pasal 10: Literasi Sains</strong><br> Ayat 1. Dalam menyebarkan informasi, anggota wajib merujuk pada sumber data yang valid dan terpercaya (seperti NASA, ESO, BRIN/LAPAN, dll.).<br> Ayat 2. Anggota bertanggung jawab untuk meluruskan misinformasi astronomi yang beredar di lingkungan komunitas.</div>
+          </div>
+          <div class="law-chapter"><h4>BAB VI: PERTEMUAN DAN PENGAMBILAN KEPUTUSAN</h4>
+            <div class="law-article"><strong>Pasal 11: Musyawarah Besar</strong><br> Ayat 1. Musyawarah Besar merupakan forum pengambilan keputusan tertinggi organisasi.<br> Ayat 2. Musyawarah diadakan minimal satu kali dalam setahun, baik secara daring (online) maupun luring (offline).</div>
+          </div>
+          <div class="law-chapter"><h4>BAB VII: SANKSI</h4>
+            <div class="law-article"><strong>Pasal 12: Jenis Sanksi</strong><br> Anggota yang terbukti melanggar AD/ART atau kode etik dapat dikenakan sanksi berupa:<br> a. Teguran lisan atau tertulis.<br> b. Penangguhan status keanggotaan (Suspend) untuk jangka waktu tertentu.<br> c. Pemberhentian secara tidak hormat dari keanggotaan.<br> Tata cara pemberian sanksi diputuskan melalui rapat pengurus inti.</div>
+          </div>
+          <div class="law-chapter"><h4>BAB VIII: PENUTUP</h4>
+            <div class="law-article"><strong>Pasal 13: Perubahan AD/ART</strong><br> Ayat 1. Perubahan pada isi AD/ART ini hanya dapat dilakukan melalui kesepakatan Musyawarah Besar.<br> Ayat 2. Perubahan dinyatakan sah jika disetujui oleh minimal 2/3 dari jumlah pengurus inti yang hadir.</div>
+          </div>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="agreeLaw">
+          <label>Saya telah membaca <strong>Undang-Undang Komunitas COA</strong> (seluruh pasal dan ayat) dan akan mematuhinya serta menjunjung tinggi nilai orisinalitas dan literasi sains.</label>
+        </div>
+        <div id="errorPage3"></div>
+        <div class="button-group">
+          <button class="btn btn-prev" onclick="prevPage(3)"><i class="fas fa-arrow-left"></i> Kembali</button>
+          <button class="btn btn-next" onclick="nextPage(3)">Selanjutnya <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- PAGE 4: RINGKASAN + TOMBOL KIRIM -->
+      <div id="page4" class="page">
+        <h3 style="margin-bottom: 1rem;"><i class="fas fa-clipboard-list"></i> Ringkasan Biodata</h3>
+        <div class="summary-card" id="summaryContainer"></div>
+        <div id="errorPage4"></div>
+        <div class="button-group">
+          <button class="btn btn-prev" onclick="prevPage(4)"><i class="fas fa-arrow-left"></i> Kembali</button>
+          <button class="btn btn-submit" id="submitWA"><i class="fas fa-rocket"></i> Daftar Sekarang</button>
+        </div>
+        <div id="formFeedback" style="margin-top: 1rem;"></div>
+      </div>
+    </div>
+    <div class="footer-note">
+      <i class="fas fa-shield-alt"></i> COA | Creator Of Astronomy — Explore the Universe, Create the Future
+    </div>
+  </div>
+</div>
+
+<script>
+  // Stars background
+  function createStars() {
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 150; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.width = Math.random() * 3 + 'px';
+      star.style.height = star.style.width;
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 5 + 's';
+      star.style.animationDuration = Math.random() * 3 + 2 + 's';
+      starsContainer.appendChild(star);
+    }
+  }
+  createStars();
+
+  // Splash screen + animasi scan
+  setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    splash.classList.add('hide');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('mainContent').classList.add('show');
+    }, 800);
+  }, 3500);
+
+  // Variabel dan fungsi multi-step
+  let currentPage = 1;
+
+  function showPage(page) {
+    for (let i = 1; i <= 4; i++) {
+      const pageEl = document.getElementById(`page${i}`);
+      if (pageEl) pageEl.classList.remove('active');
+    }
+    document.getElementById(`page${page}`).classList.add('active');
+    for (let i = 1; i <= 4; i++) {
+      const step = document.querySelector(`.step[data-step="${i}"]`);
+      if (step) {
+        if (i === page) step.classList.add('active');
+        else step.classList.remove('active');
+      }
+    }
+    if (page === 4) updateSummary();
+    currentPage = page;
+  }
+
+  function validatePage1() {
+    const fullname = document.getElementById('fullname').value.trim();
+    const age = document.getElementById('age').value.trim();
+    const errorDiv = document.getElementById('errorPage1');
+    if (!fullname) { errorDiv.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Nama lengkap wajib diisi!</div>'; return false; }
+    if (!age) { errorDiv.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Umur wajib diisi!</div>'; return false; }
+    if (isNaN(age) || age < 1 || age > 120) { errorDiv.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Umur tidak valid!</div>'; return false; }
+    errorDiv.innerHTML = '';
+    return true;
+  }
+
+  function validatePage2() {
+    const email = document.getElementById('email').value.trim();
+    const whatsapp = document.getElementById('whatsapp').value.trim();
+    const errorDiv = document.getElementById('errorPage2');
+    if (!email) { errorDiv.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Email wajib diisi!</div>'; return false; }
+    if (!email.includes('@') || !email.includes('.')) { errorDiv.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Email tidak valid!</div>'; return false; }
+    if (!whatsapp) { errorDiv.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Nomor WhatsApp wajib diisi!</div>'; return false; }
+    errorDiv.innerHTML = '';
+    return true;
+  }
+
+  function validatePage3() {
+    const agree = document.getElementById('agreeLaw').checked;
+    const errorDiv = document.getElementById('errorPage3');
+    if (!agree) { errorDiv.innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Anda harus menyetujui seluruh Undang-Undang COA!</div>'; return false; }
+    errorDiv.innerHTML = '';
+    return true;
+  }
+
+  function nextPage(from) {
+    if (from === 1 && !validatePage1()) return;
+    if (from === 2 && !validatePage2()) return;
+    if (from === 3 && !validatePage3()) return;
+    showPage(from + 1);
+  }
+
+  function prevPage(from) {
+    showPage(from - 1);
+  }
+
+  function goToPage(page) {
+    if (page > currentPage) {
+      if (currentPage === 1 && !validatePage1()) return;
+      if (currentPage === 2 && !validatePage2()) return;
+      if (currentPage === 3 && !validatePage3()) return;
+    }
+    showPage(page);
+  }
+
+  function updateSummary() {
+    const fullname = document.getElementById('fullname').value.trim();
+    const age = document.getElementById('age').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const tiktok = document.getElementById('tiktok').value.trim();
+    const whatsapp = document.getElementById('whatsapp').value.trim();
+    const summaryHtml = `
+      <div class="summary-item"><div class="summary-label"><i class="fas fa-user"></i> Nama Lengkap</div><div class="summary-value">${fullname || '-'}</div></div>
+      <div class="summary-item"><div class="summary-label"><i class="fas fa-calendar-alt"></i> Umur</div><div class="summary-value">${age || '-'} tahun</div></div>
+      <div class="summary-item"><div class="summary-label"><i class="fas fa-map-marker-alt"></i> Alamat</div><div class="summary-value">${address || '-'}</div></div>
+      <div class="summary-item"><div class="summary-label"><i class="fas fa-envelope"></i> Email</div><div class="summary-value">${email || '-'}</div></div>
+      <div class="summary-item"><div class="summary-label"><i class="fab fa-tiktok"></i> TikTok</div><div class="summary-value">${tiktok || '-'}</div></div>
+      <div class="summary-item"><div class="summary-label"><i class="fab fa-whatsapp"></i> WhatsApp</div><div class="summary-value">${whatsapp || '-'}</div></div>
+    `;
+    document.getElementById('summaryContainer').innerHTML = summaryHtml;
+  }
+
+  // WhatsApp integration
+  const submitBtn = document.getElementById('submitWA');
+  const feedbackDiv = document.getElementById('formFeedback');
+  const adminNumber = "6283164392936";
+
+  function getAllData() {
+    return {
+      fullname: document.getElementById('fullname').value.trim(),
+      age: document.getElementById('age').value.trim(),
+      address: document.getElementById('address').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      tiktok: document.getElementById('tiktok').value.trim(),
+      whatsapp: document.getElementById('whatsapp').value.trim()
+    };
+  }
+
+  function buildWAMessage(data) {
+    let message = "Halo Admin COA saya ingin bergabung, silahkan terima biodata saya\n\n";
+    message += "*━━━━━━━━━━━━━━━━━━━━━*\n";
+    message += `📋 *Nama Lengkap*: ${data.fullname}\n`;
+    message += `🎂 *Umur*: ${data.age} tahun\n`;
+    message += `📍 *Alamat*: ${data.address || "-"}\n`;
+    message += `📧 *Email*: ${data.email}\n`;
+    message += `🎵 *TikTok*: ${data.tiktok || "-"}\n`;
+    message += `📱 *WhatsApp*: ${data.whatsapp}\n`;
+    message += "*━━━━━━━━━━━━━━━━━━━━━*\n";
+    message += "✅ *Status*: Telah membaca & menyetujui seluruh Undang-Undang COA\n";
+    message += "*━━━━━━━━━━━━━━━━━━━━━*\n";
+    message += "✨ *Menunggu verifikasi dari admin COA* ✨\n";
+    message += "🚀 *Exploring the Universe, Creating the Future*";
+    return encodeURIComponent(message);
+  }
+
+  submitBtn.addEventListener('click', () => {
+    const data = getAllData();
+    if (!data.fullname || !data.age || !data.email || !data.whatsapp) {
+      document.getElementById('errorPage4').innerHTML = '<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> Pastikan semua data wajib telah terisi di halaman sebelumnya!</div>';
+      return;
+    }
+    const waLink = `https://wa.me/${adminNumber}?text=${buildWAMessage(data)}`;
+    feedbackDiv.innerHTML = '<div class="success-msg"><i class="fas fa-rocket"></i> Meluncur ke WhatsApp... Silakan klik "Kirim" untuk menyelesaikan pendaftaran!</div>';
+    window.open(waLink, '_blank');
+    setTimeout(() => feedbackDiv.innerHTML = '', 8000);
+  });
+</script>
+</body>
+</html>
